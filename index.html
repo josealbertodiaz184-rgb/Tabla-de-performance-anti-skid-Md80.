@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>JD Flight Dispatcher - DC-9 Landing Performance</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #121212; color: #e0e0e0; margin: 20px; }
+        .container { max-width: 720px; background: #1e1e1e; padding: 25px; border-radius: 10px; box-shadow: 0 4px 20px rgba(212, 175, 55, 0.15); margin: auto; border: 1px solid #d4af37; }
+        
+        /* Encabezado e Identidad */
+        .header { text-align: center; border-bottom: 2px solid #d4af37; padding-bottom: 15px; margin-bottom: 20px; }
+        .logo { width: 120px; height: auto; border-radius: 50%; border: 2px solid #d4af37; margin-bottom: 10px; }
+        h2 { text-align: center; color: #d4af37; margin: 5px 0; letter-spacing: 1px; font-size: 1.6em; }
+        p.brand-subtitle { text-align: center; color: #b3b3b3; font-size: 0.9em; font-weight: bold; letter-spacing: 2px; margin-top: 0; text-transform: uppercase; }
+        
+        /* Formulario */
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: #d4af37; font-size: 0.95em; }
+        select, input { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #444; border-radius: 5px; background-color: #2a2a2a; color: #fff; font-size: 14px; }
+        select:focus, input:focus { border-color: #d4af37; outline: none; }
+        
+        button { width: 100%; padding: 12px; background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%); color: #000; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        button:hover { background: linear-gradient(135deg, #e5be48 0%, #bb931b 100%); }
+        
+        /* Tabla de Resultados */
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background-color: #252525; border-radius: 6px; overflow: hidden; }
+        th, td { border: 1px solid #333; padding: 12px; text-align: center; }
+        th { background-color: #2d2a1e; color: #d4af37; font-size: 0.95em; }
+        .highlight { font-weight: bold; color: #d4af37; }
+        .status-ok-text { color: #2ecc71; font-weight: bold; }
+        .status-warn-text { color: #e74c3c; font-weight: bold; }
+        
+        /* Recuadro de Estado Operacional */
+        .status-box { margin-top: 20px; padding: 15px; border-radius: 6px; text-align: center; font-weight: bold; font-size: 1.05em; border: 2px solid transparent; }
+        .status-ok { background-color: #1b3823; color: #2ecc71; border-color: #2ecc71; }
+        .status-warning { background-color: #3d1c1d; color: #e74c3c; border-color: #e74c3c; }
+        
+        /* Pie de página de marca */
+        .footer { text-align: center; margin-top: 25px; padding-top: 15px; border-top: 1px solid #333; font-size: 0.8em; color: #777; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Encabezado con Identidad JD Flight Dispatcher -->
+    <div class="header">
+        <img src="logo_jd.jpg" alt="JD Flight Dispatcher Logo" class="logo">
+        <h2>DC-9-80 PERFORMANCE ASSESSMENT</h2>
+        <p class="brand-subtitle">Flight Dispatcher | Planificación Segura</p>
+    </div>
+    
+    <!-- Formulario de Entrada -->
+    <div class="form-group">
+        <label for="weight">Peso del Avión (LBS):</label>
+        <select id="weight">
+            <option value="80000">80,000 LB</option>
+            <option value="90000">90,000 LB</option>
+            <option value="100000">100,000 LB</option>
+            <option value="110000">110,000 LB</option>
+            <option value="118000" selected>118,000 LB</option>
+            <option value="120000">120,000 LB</option>
+            <option value="130000">130,000 LB</option>
+            <option value="140000">140,000 LB</option>
+            <option value="150000">150,000 LB</option>
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label for="altitude">Altitud de Presión (FT):</label>
+        <select id="altitude">
+            <option value="0" selected>Sea Level (0 FT)</option>
+            <option value="2000">2,000 FT</option>
+            <option value="4000">4,000 FT</option>
+            <option value="6000">6,000 FT</option>
+            <option value="8000">8,000 FT</option>
+            <option value="8500">8,500 FT</option>
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label for="wind">Viento (KTS):</label>
+        <select id="wind">
+            <option value="50">50 KTS Headwind</option>
+            <option value="40">40 KTS Headwind</option>
+            <option value="30">30 KTS Headwind</option>
+            <option value="20">20 KTS Headwind</option>
+            <option value="10">10 KTS Headwind</option>
+            <option value="0" selected>0 KTS (Calm)</option>
+            <option value="-5">5 KTS Tailwind</option>
+            <option value="-10">10 KTS Tailwind</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="antiskid">Estado del Sistema Anti-Skid:</label>
+        <select id="antiskid">
+            <option value="OPERATIVE" selected>OPERATIVO (Normal)</option>
+            <option value="INOP">INOPERATIVO (Penalidad +50% Dry / +35% Wet)</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="runway_lda">Longitud de Pista Disponible - LDA (FT):</label>
+        <input type="number" id="runway_lda" value="7000" step="100" min="2000">
+    </div>
+    
+    <!-- Botón de Acción -->
+    <button onclick="calcular()">Procesar Cálculo y Evaluar Despacho</button>
+    
+    <!-- Tabla Dinámica -->
+    <table>
+        <thead>
+            <tr>
+                <th>Condición Pista</th>
+                <th>Dist. Requerida (Factored)</th>
+                <th>% Pista Utilizada</th>
+                <th>Estado Operación</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>DRY (Seca - 60%)</strong></td>
+                <td id="res-dry-req" class="highlight">-</td>
+                <td id="res-dry-pct">-</td>
+                <td id="res-dry-status">-</td>
+            </tr>
+            <tr>
+                <td><strong>WET (Mojada - 75%)</strong></td>
+                <td id="res-wet-req" class="highlight">-</td>
+                <td id="res-wet-pct">-</td>
+                <td id="res-wet-status">-</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Información Complementaria -->
+    <p style="font-size: 0.85em; color: #aaa; text-align: center; margin-top: 12px;">
+        * Landing Speed (V<sub>ref</sub>): <strong id="res-vref" style="color: #d4af37;">-</strong> KTS IAS | Distancia Chart (Unfactored): <strong id="res-chart-dist" style="color: #d4af37;">-</strong> FT
+    </p>
+
+    <!-- Recuadro de Estado Operacional General -->
+    <div id="status-box" class="status-box status-ok">
+        Estatus Operacional: Evaluando...
+    </div>
+
+    <!-- Pie de Página -->
+    <div class="footer">
+        Desarrollado para Control de Despacho y Operaciones de Vuelo | <strong>JD - Planificación Segura</strong>
+    </div>
+</div>
+
+<script>
+function calcular() {
+    let weight = parseFloat(document.getElementById('weight').value);
+    let alt = parseFloat(document.getElementById('altitude').value);
+    let wind = parseFloat(document.getElementById('wind').value);
+    let antiSkid = document.getElementById('antiskid').value;
+    let lda = parseFloat(document.getElementById('runway_lda').value);
+
+    let weight_k = weight / 1000.0;
+
+    // 1. Landing Speed (IAS)
+    let vref = 100.0 + (weight_k - 80.0) * (58.0 / 70.0);
+
+    // 2. Base Field Length del gráfico (Unfactored)
+    let dist_chart_base = (3.55 + (weight_k - 80.0) * (2.50 / 70.0)) * 1000.0;
+
+    // 3. Ajuste por Altitud y Viento
+    let f_alt = 1.0 + (alt / 8500.0) * 0.28;
+    let f_wind = wind >= 0 ? (1.0 - (wind / 10.0) * 0.08) : (1.0 + (Math.abs(wind) / 10.0) * 0.15);
+
+    let chart_corrected = dist_chart_base * f_alt * f_wind;
+
+    // 4. Cálculo Pista Seca (Regla 60%)
+    let dry_required = chart_corrected / 0.60;
+    if (antiSkid === "INOP") {
+        dry_required *= 1.50;
+    }
+
+    // 5. Cálculo Pista Mojada (Regla 75% / +15%)
+    let wet_required = (chart_corrected / 0.60) * 1.15;
+    if (antiSkid === "INOP") {
+        wet_required *= 1.35;
+    }
+
+    // Porcentajes de Pista Utilizada respecto a LDA
+    let dry_pct = (dry_required / lda) * 100.0;
+    let wet_pct = (wet_required / lda) * 100.0;
+
+    // Actualización de Campos Generales
+    document.getElementById('res-vref').innerText = vref.toFixed(1);
+    document.getElementById('res-chart-dist').innerText = Math.round(chart_corrected).toLocaleString();
+
+    // Actualización Fila DRY
+    document.getElementById('res-dry-req').innerText = Math.round(dry_required).toLocaleString() + " FT";
+    document.getElementById('res-dry-pct').innerText = dry_pct.toFixed(1) + " %";
+    let dry_status_el = document.getElementById('res-dry-status');
+    if (dry_required <= lda) {
+        dry_status_el.innerHTML = '<span class="status-ok-text">ÓPTIMO</span>';
+    } else {
+        dry_status_el.innerHTML = '<span class="status-warn-text">NO AUTORIZADO</span>';
+    }
+
+    // Actualización Fila WET
+    document.getElementById('res-wet-req').innerText = Math.round(wet_required).toLocaleString() + " FT";
+    document.getElementById('res-wet-pct').innerText = wet_pct.toFixed(1) + " %";
+    let wet_status_el = document.getElementById('res-wet-status');
+    if (wet_required <= lda) {
+        wet_status_el.innerHTML = '<span class="status-ok-text">ÓPTIMO</span>';
+    } else {
+        wet_status_el.innerHTML = '<span class="status-warn-text">NO AUTORIZADO</span>';
+    }
+
+    // Recuadro de Resumen General
+    let statusBox = document.getElementById('status-box');
+    if (wet_required <= lda) {
+        statusBox.className = "status-box status-ok";
+        statusBox.innerHTML = `Pista ÓPTIMA para Despacho en Pista Seca y Mojada<br><small>Anti-Skid ${antiSkid} | LDA: ${lda.toLocaleString()} FT</small>`;
+    } else if (dry_required <= lda) {
+        statusBox.className = "status-box status-warning";
+        statusBox.innerHTML = `Pista ÓPTIMA ÚNICAMENTE para Pista Seca<br><small>No autorizada para pista mojada por requerimiento de longitud</small>`;
+    } else {
+        statusBox.className = "status-box status-warning";
+        statusBox.innerHTML = `Pista NO ÓPTIMA / NO AUTORIZADA PARA DESPACHO<br><small>Supera la LDA disponible en ambas condiciones</small>`;
+    }
+}
+
+window.onload = calcular;
+</script>
+
+</body>
+</html>
